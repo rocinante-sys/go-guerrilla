@@ -139,6 +139,9 @@ type Responses struct {
 	FailBackendTransaction       *Response
 	FailBackendTimeout           *Response
 	FailRcptCmd                  *Response
+	FailFrontendNotRunning       *Response
+	FailFrontendTransaction      *Response
+	FailFrontendTimeout          *Response
 
 	// The 400's
 	ErrorTooManyRecipients *Response
@@ -359,6 +362,26 @@ func init() {
 		Comment:      "User unknown in local recipient table",
 	}
 
+	Canned.FailFrontendNotRunning = &Response{
+		EnhancedCode: OtherOrUndefinedProtocolStatus,
+		BasicCode:    554,
+		Class:        ClassPermanentFailure,
+		Comment:      "Transaction failed - frontend not running",
+	}
+
+	Canned.FailFrontendTransaction = &Response{
+		EnhancedCode: OtherOrUndefinedProtocolStatus,
+		BasicCode:    554,
+		Class:        ClassPermanentFailure,
+		Comment:      "Error:",
+	}
+
+	Canned.FailFrontendTimeout = &Response{
+		EnhancedCode: OtherOrUndefinedProtocolStatus,
+		BasicCode:    554,
+		Class:        ClassPermanentFailure,
+		Comment:      "Error: transaction timeout",
+	}
 }
 
 // DefaultMap contains defined default codes (RfC 3463)

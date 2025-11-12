@@ -8,6 +8,7 @@ import (
 	"sync/atomic"
 
 	"github.com/phires/go-guerrilla/backends"
+	"github.com/phires/go-guerrilla/frontends"
 	"github.com/phires/go-guerrilla/log"
 )
 
@@ -53,6 +54,7 @@ type guerrilla struct {
 	EventHandler
 	logStore
 	backendStore
+	frontendStore
 }
 
 type logStore struct {
@@ -60,6 +62,10 @@ type logStore struct {
 }
 
 type backendStore struct {
+	atomic.Value
+}
+
+type frontendStore struct {
 	atomic.Value
 }
 
@@ -81,12 +87,13 @@ func (ls *logStore) setMainlog(log log.Logger) {
 }
 
 // Returns a new instance of Guerrilla with the given config, not yet running. Backend started.
-func New(ac *AppConfig, b backends.Backend, l log.Logger) (Guerrilla, error) {
+func New(ac *AppConfig, b backends.Backend, f frontends.Frontend, l log.Logger) (Guerrilla, error) {
 	g := &guerrilla{
 		Config:  *ac, // take a local copy
 		servers: make(map[string]*server, len(ac.Servers)),
 	}
 	g.backendStore.Store(b)
+	g.frontendStore.Store(f)
 	g.setMainlog(l)
 
 	if ac.LogLevel != "" {
@@ -112,6 +119,12 @@ func New(ac *AppConfig, b backends.Backend, l log.Logger) (Guerrilla, error) {
 		return g, err
 	}
 
+	// start frontend for pre-processing email
+	err = g.frontend().Start()
+	if err != nil {
+		return g, err
+	}
+
 	// subscribe for any events that may come in while running
 	g.subscribeEvents()
 
@@ -133,7 +146,7 @@ func (g *guerrilla) makeServers() error {
 			continue
 		} else {
 			sc := sc // pin!
-			server, err := newServer(&sc, g.backend(), g.mainlog())
+			server, err := newServer(&sc, g.backend(), g.frontend(), g.mainlog())
 			if err != nil {
 				g.mainlog().WithError(err).Errorf("Failed to create server [%s]", sc.ListenInterface)
 				errs = append(errs, err)
@@ -431,6 +444,20 @@ func (g *guerrilla) storeBackend(b backends.Backend) {
 func (g *guerrilla) backend() backends.Backend {
 	if b, ok := g.backendStore.Load().(backends.Backend); ok {
 		return b
+	}
+	return nil
+}
+
+func (g *guerrilla) storeFrontend(f frontends.Frontend) {
+	g.frontendStore.Store(f)
+	g.mapServers(func(server *server) {
+		server.setFrontend(f)
+	})
+}
+
+func (g *guerrilla) frontend() frontends.Frontend {
+	if f, ok := g.frontendStore.Load().(frontends.Frontend); ok {
+		return f
 	}
 	return nil
 }

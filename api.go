@@ -9,15 +9,17 @@ import (
 	"time"
 
 	"github.com/phires/go-guerrilla/backends"
+	"github.com/phires/go-guerrilla/frontends"
 	"github.com/phires/go-guerrilla/log"
 )
 
 // Daemon provides a convenient API when using go-guerrilla as a package in your Go project.
 // Is's facade for Guerrilla, AppConfig, backends.Backend and log.Logger
 type Daemon struct {
-	Config  *AppConfig
-	Logger  log.Logger
-	Backend backends.Backend
+	Config   *AppConfig
+	Logger   log.Logger
+	Backend  backends.Backend
+	Frontend frontends.Frontend
 
 	// Guerrilla will be managed through the API
 	g Guerrilla
@@ -35,6 +37,12 @@ type deferredSub struct {
 // name is the identifier to be used in the config. See backends docs for more info.
 func (d *Daemon) AddProcessor(name string, pc backends.ProcessorConstructor) {
 	backends.Svc.AddProcessor(name, pc)
+}
+
+// AddPreProcessor adds a processor constructor to the frontend.
+// name is the identifier to be used in the config. See frontends docs for more info.
+func (d *Daemon) AddPreProcessor(name string, pc frontends.ProcessorConstructor) {
+	frontends.Svc.AddProcessor(name, pc)
 }
 
 // Starts the daemon, initializing d.Config, d.Logger and d.Backend with defaults
@@ -59,7 +67,13 @@ func (d *Daemon) Start() (err error) {
 				return err
 			}
 		}
-		d.g, err = New(d.Config, d.Backend, d.Logger)
+		if d.Frontend == nil {
+			d.Frontend, err = frontends.New(d.Config.FrontendConfig, d.Logger)
+			if err != nil {
+				return err
+			}
+		}
+		d.g, err = New(d.Config, d.Backend, d.Frontend, d.Logger)
 		if err != nil {
 			return err
 		}

@@ -11,6 +11,7 @@ import (
 	"time"
 
 	"github.com/phires/go-guerrilla/backends"
+	"github.com/phires/go-guerrilla/frontends"
 	"github.com/phires/go-guerrilla/log"
 )
 
@@ -31,6 +32,8 @@ type AppConfig struct {
 	LogLevel string `json:"log_level,omitempty"`
 	// BackendConfig configures the email envelope processing backend
 	BackendConfig backends.BackendConfig `json:"backend_config"`
+	// FrontendConfig configures the email envelope processing backend
+	FrontendConfig frontends.FrontendConfig `json:"frontend_config"`
 }
 
 // ServerConfig specifies config options for a single server

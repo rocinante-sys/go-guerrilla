@@ -19,6 +19,7 @@ import (
 	"github.com/sirupsen/logrus"
 
 	"github.com/phires/go-guerrilla/backends"
+	"github.com/phires/go-guerrilla/frontends"
 	"github.com/phires/go-guerrilla/log"
 	"github.com/phires/go-guerrilla/mail"
 	"github.com/phires/go-guerrilla/mail/rfc5321"
@@ -56,10 +57,11 @@ type server struct {
 	hosts           allowedHosts // stores map[string]bool for faster lookup
 	state           int
 	// If log changed after a config reload, newLogStore stores the value here until it's safe to change it
-	logStore     atomic.Value
-	mainlogStore atomic.Value
-	backendStore atomic.Value
-	envelopePool *mail.Pool
+	logStore      atomic.Value
+	mainlogStore  atomic.Value
+	backendStore  atomic.Value
+	frontendStore atomic.Value
+	envelopePool  *mail.Pool
 }
 
 type allowedHosts struct {
@@ -97,7 +99,7 @@ func (c command) match(in []byte) bool {
 }
 
 // Creates and returns a new ready-to-run Server from a ServerConfig configuration
-func newServer(sc *ServerConfig, b backends.Backend, mainlog log.Logger) (*server, error) {
+func newServer(sc *ServerConfig, b backends.Backend, f frontends.Frontend, mainlog log.Logger) (*server, error) {
 	server := &server{
 		clientPool:      NewPool(sc.MaxClients),
 		closedListener:  make(chan bool, 1),
@@ -107,6 +109,7 @@ func newServer(sc *ServerConfig, b backends.Backend, mainlog log.Logger) (*serve
 	}
 	server.mainlogStore.Store(mainlog)
 	server.backendStore.Store(b)
+	server.frontendStore.Store(f)
 	if sc.LogFile == "" {
 		// none set, use the mainlog for the server log
 		server.logStore.Store(mainlog)
@@ -198,6 +201,19 @@ func (s *server) setBackend(b backends.Backend) {
 func (s *server) backend() backends.Backend {
 	if b, ok := s.backendStore.Load().(backends.Backend); ok {
 		return b
+	}
+	return nil
+}
+
+// setBackend sets the backend to use for processing email envelopes
+func (s *server) setFrontend(f frontends.Frontend) {
+	s.frontendStore.Store(f)
+}
+
+// backend gets the backend used to process email envelopes
+func (s *server) frontend() frontends.Frontend {
+	if f, ok := s.frontendStore.Load().(frontends.Frontend); ok {
+		return f
 	}
 	return nil
 }
@@ -606,9 +622,16 @@ func (s *server) handleClient(client *client) {
 					client.sendResponse(r.FailNestedMailCmd)
 					break
 				}
-				client.MailFrom, err = client.parsePath(input[10:], client.parser.MailFrom)
+				parserInput := input[10:]
+				processCmdErr := s.frontend().ProcessCmd(&parserInput)
+				if processCmdErr != nil {
+					s.log().WithError(processCmdErr).Error("MAIL ProcessCmd error", "["+string(parserInput)+"]")
+					client.sendResponse(processCmdErr)
+					break
+				}
+				client.MailFrom, err = client.parsePath(parserInput, client.parser.MailFrom)
 				if err != nil {
-					s.log().WithError(err).Error("MAIL parse error", "["+string(input[10:])+"]")
+					s.log().WithError(err).Error("MAIL parse error", "["+string(parserInput)+"]")
 					client.sendResponse(err)
 					break
 				} else if client.parser.NullPath {
@@ -622,9 +645,16 @@ func (s *server) handleClient(client *client) {
 					client.sendResponse(r.ErrorTooManyRecipients)
 					break
 				}
-				to, err := client.parsePath(input[8:], client.parser.RcptTo)
+				parserInput := input[8:]
+				processCmdErr := s.frontend().ProcessCmd(&parserInput)
+				if processCmdErr != nil {
+					s.log().WithError(processCmdErr).Error("MAIL ProcessCmd error", "["+string(parserInput)+"]")
+					client.sendResponse(processCmdErr)
+					break
+				}
+				to, err := client.parsePath(parserInput, client.parser.RcptTo)
 				if err != nil {
-					s.log().WithError(err).Error("RCPT parse error", "["+string(input[8:])+"]")
+					s.log().WithError(err).Error("RCPT parse error", "["+string(parserInput)+"]")
 					client.sendResponse(err.Error())
 					break
 				}
