@@ -7,9 +7,9 @@ import (
 	"sync"
 	"sync/atomic"
 
-	"github.com/phires/go-guerrilla/backends"
-	"github.com/phires/go-guerrilla/frontends"
-	"github.com/phires/go-guerrilla/log"
+	"github.com/rocinante-sys/go-guerrilla/backends"
+	"github.com/rocinante-sys/go-guerrilla/frontends"
+	"github.com/rocinante-sys/go-guerrilla/log"
 )
 
 const (

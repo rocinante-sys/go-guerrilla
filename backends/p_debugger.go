@@ -4,7 +4,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/phires/go-guerrilla/mail"
+	"github.com/rocinante-sys/go-guerrilla/mail"
 )
 
 // ----------------------------------------------------------------------------------

@@ -18,13 +18,14 @@ import (
 	"encoding/json"
 	"testing"
 
-	"github.com/phires/go-guerrilla/mail/rfc5321"
+	"github.com/rocinante-sys/go-guerrilla/frontends"
+	"github.com/rocinante-sys/go-guerrilla/mail/rfc5321"
 
 	"time"
 
-	"github.com/phires/go-guerrilla"
-	"github.com/phires/go-guerrilla/backends"
-	"github.com/phires/go-guerrilla/log"
+	"github.com/rocinante-sys/go-guerrilla"
+	"github.com/rocinante-sys/go-guerrilla/backends"
+	"github.com/rocinante-sys/go-guerrilla/log"
 
 	"bufio"
 
@@ -37,7 +38,7 @@ import (
 
 	"os"
 
-	"github.com/phires/go-guerrilla/tests/testcert"
+	"github.com/rocinante-sys/go-guerrilla/tests/testcert"
 )
 
 type TestConfig struct {
@@ -69,7 +70,8 @@ func init() {
 			return
 		}
 		backend, _ := getBackend(config.BackendConfig, logger)
-		app, initErr = guerrilla.New(&config.AppConfig, backend, logger)
+		frontend, _ := getFrontend(config.FrontendConfig, logger)
+		app, initErr = guerrilla.New(&config.AppConfig, backend, frontend, logger)
 	}
 
 }
@@ -128,6 +130,15 @@ func getBackend(backendConfig map[string]interface{}, l log.Logger) (backends.Ba
 		os.Exit(1)
 	}
 	return b, err
+}
+
+func getFrontend(frontendConfig map[string]interface{}, l log.Logger) (frontends.Frontend, error) {
+	f, err := frontends.New(frontendConfig, l)
+	if err != nil {
+		fmt.Println("frontend init error", err)
+		os.Exit(1)
+	}
+	return f, err
 }
 
 func setupCerts(c *TestConfig) error {

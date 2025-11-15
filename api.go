@@ -8,9 +8,9 @@ import (
 	"path/filepath"
 	"time"
 
-	"github.com/phires/go-guerrilla/backends"
-	"github.com/phires/go-guerrilla/frontends"
-	"github.com/phires/go-guerrilla/log"
+	"github.com/rocinante-sys/go-guerrilla/backends"
+	"github.com/rocinante-sys/go-guerrilla/frontends"
+	"github.com/rocinante-sys/go-guerrilla/log"
 )
 
 // Daemon provides a convenient API when using go-guerrilla as a package in your Go project.

@@ -7,8 +7,8 @@ import (
 	"sync/atomic"
 	"time"
 
-	"github.com/phires/go-guerrilla/log"
-	"github.com/phires/go-guerrilla/mail"
+	"github.com/rocinante-sys/go-guerrilla/log"
+	"github.com/rocinante-sys/go-guerrilla/mail"
 )
 
 var (

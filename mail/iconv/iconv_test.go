@@ -4,7 +4,7 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/phires/go-guerrilla/mail"
+	"github.com/rocinante-sys/go-guerrilla/mail"
 )
 
 // This will use the iconv encoder

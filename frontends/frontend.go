@@ -9,7 +9,7 @@ import (
 	"sync"
 	"sync/atomic"
 
-	"github.com/phires/go-guerrilla/log"
+	"github.com/rocinante-sys/go-guerrilla/log"
 )
 
 var (

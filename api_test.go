@@ -11,10 +11,10 @@ import (
 	"testing"
 	"time"
 
-	"github.com/phires/go-guerrilla/backends"
-	"github.com/phires/go-guerrilla/log"
-	"github.com/phires/go-guerrilla/mail"
-	"github.com/phires/go-guerrilla/response"
+	"github.com/rocinante-sys/go-guerrilla/backends"
+	"github.com/rocinante-sys/go-guerrilla/log"
+	"github.com/rocinante-sys/go-guerrilla/mail"
+	"github.com/rocinante-sys/go-guerrilla/response"
 )
 
 // Test Starting smtp without setting up logger / backend

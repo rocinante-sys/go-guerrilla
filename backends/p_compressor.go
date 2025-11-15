@@ -6,7 +6,7 @@ import (
 	"io"
 	"sync"
 
-	"github.com/phires/go-guerrilla/mail"
+	"github.com/rocinante-sys/go-guerrilla/mail"
 )
 
 // ----------------------------------------------------------------------------------

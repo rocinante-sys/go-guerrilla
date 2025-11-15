@@ -10,9 +10,9 @@ import (
 	"runtime/debug"
 	"strings"
 
-	"github.com/phires/go-guerrilla/log"
-	"github.com/phires/go-guerrilla/mail"
-	"github.com/phires/go-guerrilla/response"
+	"github.com/rocinante-sys/go-guerrilla/log"
+	"github.com/rocinante-sys/go-guerrilla/mail"
+	"github.com/rocinante-sys/go-guerrilla/response"
 )
 
 var ErrProcessorNotFound error

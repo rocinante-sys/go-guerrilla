@@ -14,10 +14,11 @@ import (
 	"io/ioutil"
 	"net"
 
-	"github.com/phires/go-guerrilla/backends"
-	"github.com/phires/go-guerrilla/log"
-	"github.com/phires/go-guerrilla/mail"
-	"github.com/phires/go-guerrilla/mocks"
+	"github.com/rocinante-sys/go-guerrilla/backends"
+	"github.com/rocinante-sys/go-guerrilla/frontends"
+	"github.com/rocinante-sys/go-guerrilla/log"
+	"github.com/rocinante-sys/go-guerrilla/mail"
+	"github.com/rocinante-sys/go-guerrilla/mocks"
 )
 
 // getMockServerConfig gets a mock ServerConfig struct used for creating a new server
@@ -56,7 +57,13 @@ func getMockServerConn(sc *ServerConfig, t *testing.T) (*mocks.Conn, *server) {
 	if err != nil {
 		t.Error("new dummy backend failed because:", err)
 	}
-	server, err := newServer(sc, backend, mainlog)
+	frontend, err := frontends.New(
+		frontends.FrontendConfig{"save_workers_size": 1},
+		mainlog)
+	if err != nil {
+		t.Error("new dummy frontend failed because:", err)
+	}
+	server, err := newServer(sc, backend, frontend, mainlog)
 	if err != nil {
 		//t.Error("new server failed because:", err)
 	} else {
@@ -947,7 +954,7 @@ func TestProxy(t *testing.T) {
 	}
 
 	// Ensure the server doesn't allow multiple PROXY headers
-	// https://github.com/phires/go-guerrilla/security/advisories/GHSA-c2c3-pqw5-5p7c
+	// https://github.com/rocinante-sys/go-guerrilla/security/advisories/GHSA-c2c3-pqw5-5p7c
 	if err = w.PrintfLine("PROXY TCP4 1.2.3.5 127.0.0.1 12345 25"); err != nil {
 		t.Error(err)
 	}

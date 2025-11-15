@@ -19,6 +19,7 @@ import (
 
 	"github.com/phires/go-guerrilla"
 	"github.com/phires/go-guerrilla/backends"
+	"github.com/phires/go-guerrilla/frontends"
 	"github.com/phires/go-guerrilla/log"
 	test "github.com/phires/go-guerrilla/tests"
 	"github.com/phires/go-guerrilla/tests/testcert"
@@ -505,8 +506,10 @@ func TestCmdConfigChangeEvents(t *testing.T) {
 	}
 
 	bcfg := backends.BackendConfig{"log_received_mails": true}
+	fcfg := frontends.FrontendConfig{}
 	backend, err := backends.New(bcfg, mainlog)
-	app, err := guerrilla.New(oldconf, backend, mainlog)
+	frontend, err := frontends.New(fcfg, mainlog)
+	app, err := guerrilla.New(oldconf, backend, frontend, mainlog)
 	if err != nil {
 		t.Error("Failed to create new app", err)
 	}

@@ -18,12 +18,12 @@ import (
 
 	"github.com/sirupsen/logrus"
 
-	"github.com/phires/go-guerrilla/backends"
-	"github.com/phires/go-guerrilla/frontends"
-	"github.com/phires/go-guerrilla/log"
-	"github.com/phires/go-guerrilla/mail"
-	"github.com/phires/go-guerrilla/mail/rfc5321"
-	"github.com/phires/go-guerrilla/response"
+	"github.com/rocinante-sys/go-guerrilla/backends"
+	"github.com/rocinante-sys/go-guerrilla/frontends"
+	"github.com/rocinante-sys/go-guerrilla/log"
+	"github.com/rocinante-sys/go-guerrilla/mail"
+	"github.com/rocinante-sys/go-guerrilla/mail/rfc5321"
+	"github.com/rocinante-sys/go-guerrilla/response"
 )
 
 const (

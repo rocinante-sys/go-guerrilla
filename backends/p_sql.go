@@ -6,13 +6,13 @@ import (
 	"strings"
 	"time"
 
-	"github.com/phires/go-guerrilla/mail"
+	"github.com/rocinante-sys/go-guerrilla/mail"
 
 	"math/big"
 	"net"
 	"runtime/debug"
 
-	"github.com/phires/go-guerrilla/response"
+	"github.com/rocinante-sys/go-guerrilla/response"
 )
 
 // ----------------------------------------------------------------------------------

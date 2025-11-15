@@ -1,7 +1,7 @@
 package backends
 
 import (
-	"github.com/phires/go-guerrilla/mail"
+	"github.com/rocinante-sys/go-guerrilla/mail"
 )
 
 // ----------------------------------------------------------------------------------

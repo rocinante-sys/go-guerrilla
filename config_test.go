@@ -6,9 +6,10 @@ import (
 	"testing"
 	"time"
 
-	"github.com/phires/go-guerrilla/backends"
-	"github.com/phires/go-guerrilla/log"
-	"github.com/phires/go-guerrilla/tests/testcert"
+	"github.com/rocinante-sys/go-guerrilla/backends"
+	"github.com/rocinante-sys/go-guerrilla/frontends"
+	"github.com/rocinante-sys/go-guerrilla/log"
+	"github.com/rocinante-sys/go-guerrilla/tests/testcert"
 )
 
 // a configuration file with a dummy backend
@@ -296,7 +297,12 @@ func TestConfigChangeEvents(t *testing.T) {
 	if err != nil {
 		t.Error("cannot create backend", err)
 	}
-	app, err := New(confA, backend, logger)
+	fcfg := frontends.FrontendConfig{"": true}
+	frontend, err := frontends.New(fcfg, logger)
+	if err != nil {
+		t.Error("cannot create frontned", err)
+	}
+	app, err := New(confA, backend, frontend, logger)
 	if err != nil {
 		t.Error("cannot create daemon", err)
 	}
