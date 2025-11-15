@@ -4,15 +4,15 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/phires/go-guerrilla"
-	"github.com/phires/go-guerrilla/log"
+	"github.com/rocinante-sys/go-guerrilla"
+	"github.com/rocinante-sys/go-guerrilla/log"
 
 	// enable the Redis redigo driver
-	_ "github.com/phires/go-guerrilla/backends/storage/redigo"
+	_ "github.com/rocinante-sys/go-guerrilla/backends/storage/redigo"
 
 	// Choose iconv or mail/encoding package which uses golang.org/x/net/html/charset
-	//_ "github.com/phires/go-guerrilla/mail/iconv"
-	_ "github.com/phires/go-guerrilla/mail/encoding"
+	//_ "github.com/rocinante-sys/go-guerrilla/mail/iconv"
+	_ "github.com/rocinante-sys/go-guerrilla/mail/encoding"
 
 	"github.com/spf13/cobra"
 

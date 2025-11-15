@@ -17,12 +17,12 @@ import (
 	"testing"
 	"time"
 
-	"github.com/phires/go-guerrilla"
-	"github.com/phires/go-guerrilla/backends"
-	"github.com/phires/go-guerrilla/frontends"
-	"github.com/phires/go-guerrilla/log"
-	test "github.com/phires/go-guerrilla/tests"
-	"github.com/phires/go-guerrilla/tests/testcert"
+	"github.com/rocinante-sys/go-guerrilla"
+	"github.com/rocinante-sys/go-guerrilla/backends"
+	"github.com/rocinante-sys/go-guerrilla/frontends"
+	"github.com/rocinante-sys/go-guerrilla/log"
+	test "github.com/rocinante-sys/go-guerrilla/tests"
+	"github.com/rocinante-sys/go-guerrilla/tests/testcert"
 	"github.com/spf13/cobra"
 )
 
